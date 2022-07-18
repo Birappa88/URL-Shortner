@@ -25,6 +25,11 @@ const shortURL = async (req, res) => {
         .status(400)
         .send({ status: false, message: "longUrl is not a valid URL" });
     }
+    if (url.match("https://")) {
+    } else if (!url.match("http://")) {
+      url = `http://${url}`;
+    }
+    if (url.match("//www.")) url = url.replace("www.", "");
 
     let findUrl = await urlModel
       .findOne({ longUrl: url })
@@ -33,8 +38,6 @@ const shortURL = async (req, res) => {
     if (findUrl) {
       return res.status(200).send({ status: true, data: findUrl });
     }
-    if(!url.match("http://")) url = `http://${url}`
-    if(url.match("//www.")) url = url.replace("www.","")
 
     let urlCode = () => {
       return Math.random().toString(36).substring(2, 7);
@@ -45,7 +48,7 @@ const shortURL = async (req, res) => {
     let data = {
       urlCode: code,
       longUrl: url,
-      shortUrl: `http://${req.get('host')}/${code}`,
+      shortUrl: `http://${req.get("host")}/${code}`,
     };
 
     await urlModel.create(data);
@@ -73,8 +76,7 @@ const getURL = async (req, res) => {
         .status(404)
         .send({ status: false, message: "there is no url with this code" });
     }
-    return res.status(302).redirect(data.longUrl)
-
+    return res.status(302).redirect(data.longUrl);
   } catch (err) {
     console.log(err.message);
     return res.status(500).send({ status: false, message: err.message });
