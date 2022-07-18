@@ -33,6 +33,8 @@ const shortURL = async (req, res) => {
     if (findUrl) {
       return res.status(200).send({ status: true, data: findUrl });
     }
+    if(!url.match("http://")) url = `http://${url}`
+    if(url.match("//www.")) url = url.replace("www.","")
 
     let urlCode = () => {
       return Math.random().toString(36).substring(2, 7);
@@ -43,7 +45,7 @@ const shortURL = async (req, res) => {
     let data = {
       urlCode: code,
       longUrl: url,
-      shortUrl: `http://localhost:3000/${code}`,
+      shortUrl: `http://${req.get('host')}/${code}`,
     };
 
     await urlModel.create(data);
