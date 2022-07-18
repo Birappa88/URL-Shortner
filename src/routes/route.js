@@ -6,5 +6,6 @@ const router = express.Router()
 router.post("/url/shorten",urlController.shortURL)
 
 //GET API TO GT THE SHORT URL
+router.get("/:urlCode",urlController.getURL)
 
 module.exports = router
