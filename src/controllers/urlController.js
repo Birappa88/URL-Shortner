@@ -1,6 +1,23 @@
-const mongoose = require("mongoose");
 const urlModel = require("../models/urlModel");
 const validator = require("validator");
+const redis = require("redis");
+const { promisify } = require("util");
+
+const redisClient = redis.createClient(
+  12180,
+  "redis-12180.c212.ap-south-1-1.ec2.cloud.redislabs.com",
+  { no_ready_check: true }
+);
+redisClient.auth("J9z2aQOHrDsXdSsYTtb3XMY2K8uLDYv2", function (err) {
+  if (err) throw err;
+});
+
+redisClient.on("connect", async function () {
+  console.log("Connected to Redis..");
+});
+
+const SET_ASYNC = promisify(redisClient.SET).bind(redisClient);
+const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
 
 const shortURL = async (req, res) => {
   try {
@@ -69,6 +86,12 @@ const getURL = async (req, res) => {
         .status(400)
         .send({ status: false, message: "urlCode is invalid" });
     }
+
+    let cacheData = await GET_ASYNC(`${urlCode}`)
+    if(cacheData){
+      return res.status(302).redirect(cacheData)
+    }
+
     let data = await urlModel.findOne({ urlCode: urlCode });
 
     if (!data) {
@@ -76,7 +99,8 @@ const getURL = async (req, res) => {
         .status(404)
         .send({ status: false, message: "there is no url with this code" });
     }
-    return res.status(302).redirect(data.longUrl);
+    res.status(302).redirect(data.longUrl);
+    await SET_ASYNC(`${urlCode}`, data.longUrl)
   } catch (err) {
     console.log(err.message);
     return res.status(500).send({ status: false, message: err.message });
