@@ -100,7 +100,7 @@ const getURL = async (req, res) => {
         .send({ status: false, message: "there is no url with this code" });
     }
     res.status(302).redirect(data.longUrl);
-    await SET_ASYNC(`${urlCode}`, data.longUrl)
+    await SET_ASYNC(`${urlCode}`, data.longUrl,'EX',1440*60)
   } catch (err) {
     console.log(err.message);
     return res.status(500).send({ status: false, message: err.message });
