@@ -83,7 +83,7 @@ const getURL = async (req, res) => {
 
     if (urlCode.length != 5) {
       return res
-        .status(400)
+        .status(404)
         .send({ status: false, message: "urlCode is invalid" });
     }
 
