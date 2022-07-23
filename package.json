@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/coolboyalan/group16UrlShortner.git"
+    "url": "git+https://github.com/Birappa88/URL-Shortner.git"
   },
   "author": "Akshay Kumar, Birappa Mangoda, Deepak Singh, Pooja Yadav",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/coolboyalan/group16UrlShortner/issues"
+    "url": "https://github.com/Birappa88/URL-Shortner/issues"
   },
-  "homepage": "https://github.com/coolboyalan/group16UrlShortner#readme",
+  "homepage": "https://github.com/Birappa88/URL-Shortner#readme",
   "dependencies": {
     "body-parser": "^1.20.0",
     "dotenv": "^16.0.1",

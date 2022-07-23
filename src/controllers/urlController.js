@@ -3,6 +3,8 @@ const validator = require("validator");
 const redis = require("redis");
 const { promisify } = require("util");
 
+// -----++++-----=+=-------[ Connect to Redis ]-----=+=-----+++++------ //
+
 const redisClient = redis.createClient(
   12180,
   "redis-12180.c212.ap-south-1-1.ec2.cloud.redislabs.com",
@@ -13,11 +15,14 @@ redisClient.auth("J9z2aQOHrDsXdSsYTtb3XMY2K8uLDYv2", function (err) {
 });
 
 redisClient.on("connect", async function () {
-  console.log("Connected to Redis..");
+  console.log("Connected to Redis...");
 });
 
 const SET_ASYNC = promisify(redisClient.SET).bind(redisClient);
 const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
+
+
+// -----++++-----=+=-------[ Create Short URL ]-----=+=-----+++++------ //
 
 const shortURL = async (req, res) => {
   try {
@@ -71,11 +76,15 @@ const shortURL = async (req, res) => {
     await urlModel.create(data);
 
     return res.status(201).send({ status: true, data: data });
+
   } catch (err) {
     console.log(err.message);
     res.status(500).send({ status: false, message: err.message });
   }
 };
+
+
+// -----++++-----=+=-------[ Redirect Url through Short-Url ]-----=+=-----+++++------ //
 
 const getURL = async (req, res) => {
   try {
@@ -84,11 +93,11 @@ const getURL = async (req, res) => {
     if (urlCode.length != 5) {
       return res
         .status(404)
-        .send({ status: false, message: "urlCode is invalid" });
+        .send({ status: false, message: "UrlCode is invalid" });
     }
 
     let cacheData = await GET_ASYNC(`${urlCode}`)
-    if(cacheData){
+    if (cacheData) {
       return res.status(302).redirect(cacheData)
     }
 
@@ -97,17 +106,22 @@ const getURL = async (req, res) => {
     if (!data) {
       return res
         .status(404)
-        .send({ status: false, message: "there is no url with this code" });
+        .send({ status: false, message: "There is no url with this code" });
     }
+
     res.status(302).redirect(data.longUrl);
-    await SET_ASYNC(`${urlCode}`, data.longUrl,'EX',1440*60)
+    await SET_ASYNC(`${urlCode}`, data.longUrl, 'EX', 1440 * 60)
+
   } catch (err) {
     console.log(err.message);
     return res.status(500).send({ status: false, message: err.message });
   }
 };
 
+
 module.exports = {
   shortURL,
   getURL,
 };
+
+// -----++++-----===++===-------****************-----====++===-----+++++------ //

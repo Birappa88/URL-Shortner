@@ -1,5 +1,7 @@
 const mongoose = require("mongoose")
 
+// -----++++-----=+=-------[ URL-Schema ]-----=+=-----+++++------ //
+
 const UrlSchema = new mongoose.Schema({
 
     urlCode:{
@@ -21,3 +23,5 @@ const UrlSchema = new mongoose.Schema({
 })
 
 module.exports = mongoose.model("url",UrlSchema)
+
+// -----++++-----=+=-------****************-----=+=-----+++++------ //

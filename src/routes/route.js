@@ -2,15 +2,20 @@ const express = require("express")
 const urlController = require("../controllers/urlController")
 const router = express.Router()
 
-// POST API TO CREATE A SHORT URL
+// -----++++-----=+=-------[ APIs ]-----=+=-----+++++------ //
+
+// ------------(POST Api to create Short-url)----------- //
 router.post("/url/shorten",urlController.shortURL)
 
-//GET API TO GT THE SHORT URL
+// ------------(GET Api to redirect through Short-url)----------- //
 router.get("/:urlCode",urlController.getURL)
 
-//INVALID ROUTES WILL BE HANDLED HERE
+
+// ------------(Invalid Routes will be handled here)----------- //
 router.all("*", function (req, res) {
-    res.status(404).send({ status: false, message: "you're on a wrong route" });
+    res.status(404).send({ status: false, message: "You're on a wrong route" });
   });
 
 module.exports = router
+
+// -----++++-----=+=-------****************-----=+=-----+++++------ //
